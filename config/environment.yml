@@ -1,0 +1,5 @@
+environments:
+
+ qa:
+  scheme: https
+  host: portal-qa.bravais.com
