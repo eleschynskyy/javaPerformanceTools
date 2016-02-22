@@ -11,11 +11,11 @@ import java.util.Map;
 
 public class PerformanceStatisticsCompareRuns {
 
-	private static String TEST_FOLDER = "17-Feb-2016";
-	private static String TEST_NUMBER = "1";
+	private static String TEST_FOLDER = "18-Feb-2016";
+	private static String TEST_NUMBER = "2";
 	private static String FILENAME_TEMPLATE = "_SUMMARY_FILTERED_";
-	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
-//	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
+//	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
+	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
 	// private static String PATH = "D:/Xyleme/performance/products/xpe/review_session/";
 	// private static String PATH = "D:/Xyleme/performance/products/msis/testing/";
 	// private static String PATH = "D:/Xyleme/performance/products/lcms/testing/";
@@ -35,6 +35,7 @@ public class PerformanceStatisticsCompareRuns {
 	private static void readAll() {
 		Map<String, HashMap<String, String>> responseTime = new HashMap<String, HashMap<String, String>>();
 		Map<String, HashMap<String, String>> success = new HashMap<String, HashMap<String, String>>();
+		Map<String, HashMap<String, String>> requestsTotal = new HashMap<String, HashMap<String, String>>();
 		Map<String, String> allRequests = new HashMap<String, String>();
 		File folder = new File(PATHNAME);
 		File[] listOfFiles = folder.listFiles();
@@ -48,6 +49,7 @@ public class PerformanceStatisticsCompareRuns {
 						String line;
 						HashMap<String, String> requestAveragePair = new HashMap<String, String>();
 						HashMap<String, String> requestPercentagePair = new HashMap<String, String>();
+						HashMap<String, String> requestTotalRequestsPair = new HashMap<String, String>();
 						while ((line = reader.readLine()) != null) {
 							HashMap<String, String> row = new HashMap<String, String>();
 							dataParts = line.split("\\|");
@@ -57,6 +59,7 @@ public class PerformanceStatisticsCompareRuns {
 							String percentageSuccess = calculatePercentageSuccess(row.get("percentage"));
 							requestPercentagePair.put(row.get("request"), percentageSuccess);
 							requestAveragePair.put(row.get("request"), row.get("ext_avg"));
+							requestTotalRequestsPair.put(row.get("request"), row.get("total_n"));
 							if(allRequests.containsKey(row.get("request"))){
 								String currentStatus = allRequests.get(row.get("request"));
 								if(currentStatus.equals("false") && needScaling(row.get("ext_avg"))){
@@ -72,6 +75,7 @@ public class PerformanceStatisticsCompareRuns {
 						}
 						responseTime.put(file.getName().substring(0, file.getName().length() - 4), requestAveragePair);
 						success.put(file.getName().substring(0, file.getName().length() - 4), requestPercentagePair);
+						requestsTotal.put(file.getName().substring(0, file.getName().length() - 4), requestTotalRequestsPair);
 					}
 					reader.close();
 				} catch (FileNotFoundException e) {
@@ -95,6 +99,7 @@ public class PerformanceStatisticsCompareRuns {
 				} else {
 					responseTime.get(file).put(globalKey, DEFAULT_VALUE_IF_MISSING);
 					success.get(file).put(globalKey, DEFAULT_VALUE_IF_MISSING);
+					requestsTotal.get(file).put(globalKey, DEFAULT_VALUE_IF_MISSING);
 				}
 			}
 		}
@@ -116,7 +121,10 @@ public class PerformanceStatisticsCompareRuns {
 				for(int i = 1; i <= success.keySet().size(); i++){
 					writer.write(success.get(FILENAME_TEMPLATE + i).get(request) + "|");
 				}
-				writer.write("\n");
+				for(int i = 1; i <= requestsTotal.keySet().size(); i++){
+					writer.write(requestsTotal.get(FILENAME_TEMPLATE + i).get(request) + "|");
+				}
+				writer.write(request + "\n");
 			}
 			writer.close();
 		} catch (IOException e) {
