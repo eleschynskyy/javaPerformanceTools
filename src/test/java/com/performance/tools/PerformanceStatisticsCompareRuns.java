@@ -11,11 +11,11 @@ import java.util.Map;
 
 public class PerformanceStatisticsCompareRuns {
 
-	private static String TEST_FOLDER = "18-Feb-2016";
-	private static String TEST_NUMBER = "2";
+	private static String TEST_FOLDER = "23-Feb-2016";
+	private static String TEST_NUMBER = "1";
 	private static String FILENAME_TEMPLATE = "_SUMMARY_FILTERED_";
-//	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
-	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
+	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
+//	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
 	// private static String PATH = "D:/Xyleme/performance/products/xpe/review_session/";
 	// private static String PATH = "D:/Xyleme/performance/products/msis/testing/";
 	// private static String PATH = "D:/Xyleme/performance/products/lcms/testing/";
@@ -119,10 +119,10 @@ public class PerformanceStatisticsCompareRuns {
 					writer.write(responseTime.get(FILENAME_TEMPLATE + i).get(request) + "|");
 				}
 				for(int i = 1; i <= success.keySet().size(); i++){
-					writer.write(success.get(FILENAME_TEMPLATE + i).get(request) + "|");
+					writer.write(removeMissing(success.get(FILENAME_TEMPLATE + i).get(request)) + "|");
 				}
 				for(int i = 1; i <= requestsTotal.keySet().size(); i++){
-					writer.write(requestsTotal.get(FILENAME_TEMPLATE + i).get(request) + "|");
+					writer.write(removeMissing(requestsTotal.get(FILENAME_TEMPLATE + i).get(request)) + "|");
 				}
 				writer.write(request + "\n");
 			}
