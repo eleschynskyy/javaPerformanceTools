@@ -58,8 +58,8 @@ public class APILcmsTest {
 //		importToExistingFolder();
 //		deleteFolder();
 //		listDocumentsInFolder();
-		getUsers();
-		System.out.println("Done");
+//		getUsers();
+//		System.out.println("Done");
 	}
 
 	private static void getUsers() {

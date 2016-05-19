@@ -32,7 +32,7 @@ public class CloneReviewSessionJmx {
 
 	private static HashMap<String, ArrayList<HashMap<String, String>>> readParameters() {
 		String path = "D:/Xyleme/performance/products/xpe/review_session/parsedXmlInfo/";
-		File file = new File(path + "ReviewSessionInfo.txt");
+		File file = new File(path + "ReviewSessionInfo_1.txt");
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			HashMap<String, ArrayList<HashMap<String, String>>> rsInfo = new HashMap<String, ArrayList<HashMap<String, String>>>();
@@ -74,11 +74,10 @@ public class CloneReviewSessionJmx {
 	private static void processXml() {
 		HashMap<String, ArrayList<HashMap<String, String>>> rsInfo = readParameters();
 		String path = "D:/Xyleme/performance/products/xpe/review_session/parsedXmlInfo/";
-		File file = new File(path + "rsTemplate.jmx");
-//		File file = new File(path + "TEST_RS_test.jmx");
+		File file = new File(path + "rsTemplate_TEST.jmx");
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
-			File jmxFile = new File(path + "TEST_RS.jmx");
+			File jmxFile = new File(path + "ReviewSessionPT_1.jmx");
 			if (jmxFile.exists()) {
 				jmxFile.delete();
 			}
@@ -123,11 +122,12 @@ public class CloneReviewSessionJmx {
 					//change ThreadGroup title
 					cloneThreadGroup.getAttributes().getNamedItem("testname").setTextContent("GO RS " + globalRsNumber);
 					//insert nodes
-					Node newHashTree = parent.insertBefore(cloneHashTree, beforeResultCollector);
-					Node newSeparator = parent.insertBefore(cloneSeparator, newHashTree);
+					Node newSeparator = parent.insertBefore(cloneSeparator, beforeResultCollector);
+					Node newHashTree = parent.insertBefore(cloneHashTree, newSeparator);
+					newSeparator = parent.insertBefore(cloneSeparator.cloneNode(true), newHashTree);
 					Node newThreadGroup = parent.insertBefore(cloneThreadGroup, newSeparator);
 					argumentsIterator = argumentsIterator + 4;
-					beforeResultCollectorIterator = beforeResultCollectorIterator + 3;
+					beforeResultCollectorIterator = beforeResultCollectorIterator + 4;
 				}
 			}
 			threadGroup.getAttributes().getNamedItem("enabled").setTextContent("false");

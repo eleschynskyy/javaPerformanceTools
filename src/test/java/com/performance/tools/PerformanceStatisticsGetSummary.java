@@ -19,15 +19,15 @@ import java.util.regex.Pattern;
 
 public class PerformanceStatisticsGetSummary {
 
-	private static String TEST_FOLDER = "23-Feb-2016";
+	private static String TEST_FOLDER = "18-May-2016";
 	private static String TEST_NUMBER = "1";
-	private static String BASELINE_FILENAME = "old_baseline.jtl";
-	private static String FILENAME = "old_regular.jtl";
+	private static String BASELINE_FILENAME = "1_user.jtl";
+	private static String FILENAME = "1_user.jtl";
 	private static String FILTERS = "PAUSE|_AUX";
-	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
+//	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
 //	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
 	// private static String PATH = "D:/Xyleme/performance/products/xpe/review_session/";
-	// private static String PATH = "D:/Xyleme/performance/products/msis/testing/";
+	 private static String PATH = "D:/Xyleme/performance/products/msis/testing/";
 	// private static String PATH = "D:/Xyleme/performance/products/lcms/testing/";
 	// private static String PATH = "D:/Xyleme/performance/products/bcp/tests/";
 	private static float APDEX_T_TIME_RATE = 20;// %
@@ -153,7 +153,15 @@ public class PerformanceStatisticsGetSummary {
 				if (!wholeStat.get(request).get("apd_ttime").equals("N/A")) {
 					float apdBaseline = new Float(wholeStat.get(request)
 							.get("apd_baseline").replaceAll(",", "."));
-					avgToBaseline = String.format("%.2f", extAvg / apdBaseline);
+					//calculate average to baseline %
+					float changePercentage;
+					if(extAvg >= apdBaseline){
+						changePercentage = (extAvg - apdBaseline) / apdBaseline * 100;
+					} else {
+						changePercentage = -1 * extAvg / apdBaseline * 100;
+					}
+//					avgToBaseline = String.format("%.2f", extAvg / apdBaseline);
+					avgToBaseline = String.format("%.2f", changePercentage);
 					wholeStat.get(request).put("apd_baseline", String.format("%.2f", apdBaseline));
 				}
 				wholeStat.get(request).put("avg_to_baseline", avgToBaseline);
@@ -450,11 +458,15 @@ public class PerformanceStatisticsGetSummary {
 				BufferedReader br = new BufferedReader(fileReader);
 				List<Integer> responseTimeList = new ArrayList<Integer>();
 
-				// skip 1st iteration but if there's just single line in a file read it as is
-				String line = br.readLine();
-//				String line;
+				//SPECIAL LOGIC TO PROCESS SINGLE-LINE FILES
+				//skip 1st iteration but if there's just single line in a file process it
+				String firstLine = br.readLine();
+				String line;
 				while ((line = br.readLine()) != null) {
 					responseTimeList.add(new Integer(line));
+				}
+				if(responseTimeList.isEmpty()){
+					responseTimeList.add(new Integer(firstLine));
 				}
 				Collections.sort(responseTimeList);
 				result = calculateStat(fileName, responseTimeList,

@@ -11,13 +11,13 @@ import java.util.Map;
 
 public class PerformanceStatisticsCompareRuns {
 
-	private static String TEST_FOLDER = "23-Feb-2016";
+	private static String TEST_FOLDER = "18-May-2016";
 	private static String TEST_NUMBER = "1";
 	private static String FILENAME_TEMPLATE = "_SUMMARY_FILTERED_";
-	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
+//	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
 //	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
 	// private static String PATH = "D:/Xyleme/performance/products/xpe/review_session/";
-	// private static String PATH = "D:/Xyleme/performance/products/msis/testing/";
+	 private static String PATH = "D:/Xyleme/performance/products/msis/testing/";
 	// private static String PATH = "D:/Xyleme/performance/products/lcms/testing/";
 	// private static String PATH = "D:/Xyleme/performance/products/bcp/tests/";
 	private static String PATHNAME = PATH + TEST_FOLDER + "/TEST_" + TEST_NUMBER + "/csv/";
@@ -118,6 +118,29 @@ public class PerformanceStatisticsCompareRuns {
 				for(int i = 1; i <= responseTime.keySet().size(); i++){
 					writer.write(responseTime.get(FILENAME_TEMPLATE + i).get(request) + "|");
 				}
+				//calculate the difference
+				if(responseTime.keySet().size() == 2){
+					String t1Str = responseTime.get(FILENAME_TEMPLATE + 1).get(request).replaceAll(",", ".");
+					String t2Str = responseTime.get(FILENAME_TEMPLATE + 2).get(request).replaceAll(",", ".");
+					if(!t1Str.equals("") && !t2Str.equals("")){
+						float t1 = Float.parseFloat(t1Str);
+						float t2 = Float.parseFloat(t2Str);
+						float changePercentage;
+						String changePercentageStr;
+						if(t1 <= t2){
+							changePercentage = (t2 - t1) / t1 * 100;
+							changePercentageStr = ("" + changePercentage).replaceAll("\\.", ",");
+							writer.write("-" + changePercentageStr + "|");
+						} else {
+							changePercentage = (t1 - t2) / t1 * 100;
+							changePercentageStr = ("" + changePercentage).replaceAll("\\.", ",");
+							writer.write(changePercentageStr + "|");
+						}
+					} else {
+						writer.write("|");
+					}
+				}
+				//
 				for(int i = 1; i <= success.keySet().size(); i++){
 					writer.write(removeMissing(success.get(FILENAME_TEMPLATE + i).get(request)) + "|");
 				}

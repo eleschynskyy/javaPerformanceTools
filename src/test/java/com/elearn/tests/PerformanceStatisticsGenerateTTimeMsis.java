@@ -19,8 +19,8 @@ import java.util.regex.Pattern;
 public class PerformanceStatisticsGenerateTTimeMsis {
 
 	private static float APDEX_T_TIME_RATE = 20;//%
-	private static String TEST_FOLDER = "22-Dec-2015";
-	private static String TEST_NUMBER = "1";
+	private static String TEST_FOLDER = "01-Mar-2016";
+	private static String TEST_NUMBER = "2";
 	private static int THREAD_NUMBER = 10;
 //	private static String PATH = "D:/Xyleme/performance/products/xpe/review_session/";
 //	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";

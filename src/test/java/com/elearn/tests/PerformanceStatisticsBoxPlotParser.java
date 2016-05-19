@@ -19,16 +19,17 @@ import java.util.regex.Pattern;
 
 public class PerformanceStatisticsBoxPlotParser {
 
-	private static String TEST_FOLDER = "23-Feb-2016";
+	private static String TEST_FOLDER = "01-Mar-2016";
 	private static String TEST_NUMBER = "1";
 //	private static String PATH = "D:/Xyleme/performance/products/xpe/review_session/";
 //	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
-	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
-//	private static String PATH = "D:/Xyleme/performance/products/msis/testing/";
+//	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
+	private static String PATH = "D:/Xyleme/performance/products/msis/testing/";
 //	private static String PATH = "D:/Xyleme/performance/products/lcms/testing/";
 //	private static String PATH = "D:/Xyleme/performance/products/bcp/tests/";
 //	private static String FILENAME = "baseline.jtl";
-	private static String FILENAME = "regular.jtl";
+//	private static String FILENAME = "regular.jtl";
+	private static String FILENAME = "MsisPT-1456827687-complete.jtl";
 	private static String PATHNAME = PATH + TEST_FOLDER + "/TEST_" + TEST_NUMBER + "/csv/" + FILENAME;
 	private static String OUTPUT_PATH = PATH + TEST_FOLDER + "/TEST_" + TEST_NUMBER + "/csv/";
 

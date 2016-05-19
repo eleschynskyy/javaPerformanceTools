@@ -12,11 +12,11 @@ import java.util.regex.Pattern;
 public class ResourceUsageDataProcessor {
 
 	private static String APP = "xpe";
-	private static String TEST_FOLDER = "01-Feb-2016";
-	private static String TEST_NUMBER = "3";
+	private static String TEST_FOLDER = "16-May-2016";
+	private static String TEST_NUMBER = "1";
 	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
 //	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
-	private static String PATHNAME = PATH + TEST_FOLDER + "/TEST_" + TEST_NUMBER + "/logs/" + "lcms_resource_usage.txt";
+	private static String PATHNAME = PATH + TEST_FOLDER + "/TEST_" + TEST_NUMBER + "/logs/" + "monitor.txt";
 	private static String PARSED_FILE = PATH + TEST_FOLDER + "/TEST_" + TEST_NUMBER + "/logs/" + "resource_usage_parsed.txt";
 	private static String LOAD_PATTERN = "top\\s+-\\s+(\\d\\d:\\d\\d:\\d\\d).*?load average:\\s+(\\d+.\\d+),\\s+(\\d+.\\d+),\\s+(\\d+.\\d+)";
 	private static String TASKS_PATTERN = "Tasks:\\s+(\\d+)\\s+total,\\s+(\\d+)\\s+running,\\s+(\\d+)\\s+sleeping,\\s+(\\d+)\\s+stopped,\\s+(\\d+)\\s+zombie";
