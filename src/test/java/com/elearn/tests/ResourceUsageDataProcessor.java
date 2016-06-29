@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class ResourceUsageDataProcessor {
 
 	private static String APP = "xpe";
-	private static String TEST_FOLDER = "16-May-2016";
+	private static String TEST_FOLDER = "03-Jun-2016";
 	private static String TEST_NUMBER = "1";
 	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
 //	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";

@@ -5,9 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import com.eclipsesource.json.JsonArray;
@@ -16,7 +18,20 @@ import com.eclipsesource.json.JsonObject;
 public class SplitTest {
 
 	public static void main(String[] args) {
-		generate64ByteString();
+//		generate64ByteString();
+		List<Byte> pull = new ArrayList<Byte>();
+		pull.add((byte)0);
+		pull.add((byte)1);
+		Collections.shuffle(pull);
+		for(int i = 0; i < pull.size(); i++){
+			System.out.println(pull.get(i));
+		}
+		byte[] action_values = new byte[pull.size()];
+		for(int i = 0; i < pull.size(); i++){
+			action_values[i] = pull.get(i);
+			System.out.println(action_values[i]);
+		}
+
 		System.out.println("----------------");
 	}
 

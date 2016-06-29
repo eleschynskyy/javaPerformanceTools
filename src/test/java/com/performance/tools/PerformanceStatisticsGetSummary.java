@@ -19,15 +19,15 @@ import java.util.regex.Pattern;
 
 public class PerformanceStatisticsGetSummary {
 
-	private static String TEST_FOLDER = "18-May-2016";
+	private static String TEST_FOLDER = "03-Jun-2016";
 	private static String TEST_NUMBER = "1";
-	private static String BASELINE_FILENAME = "1_user.jtl";
-	private static String FILENAME = "1_user.jtl";
+	private static String BASELINE_FILENAME = "1467026439443.jtl";
+	private static String FILENAME = "1467026439443.jtl";
 	private static String FILTERS = "PAUSE|_AUX";
 //	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
-//	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
+	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
 	// private static String PATH = "D:/Xyleme/performance/products/xpe/review_session/";
-	 private static String PATH = "D:/Xyleme/performance/products/msis/testing/";
+//	private static String PATH = "D:/Xyleme/performance/products/msis/testing/";
 	// private static String PATH = "D:/Xyleme/performance/products/lcms/testing/";
 	// private static String PATH = "D:/Xyleme/performance/products/bcp/tests/";
 	private static float APDEX_T_TIME_RATE = 20;// %
@@ -158,7 +158,7 @@ public class PerformanceStatisticsGetSummary {
 					if(extAvg >= apdBaseline){
 						changePercentage = (extAvg - apdBaseline) / apdBaseline * 100;
 					} else {
-						changePercentage = -1 * extAvg / apdBaseline * 100;
+						changePercentage = -1 * (apdBaseline - extAvg) / apdBaseline * 100;
 					}
 //					avgToBaseline = String.format("%.2f", extAvg / apdBaseline);
 					avgToBaseline = String.format("%.2f", changePercentage);

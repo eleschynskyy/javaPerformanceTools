@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 public class GuidExtractor {
 
-	private static String FILENAME = "1000-page-course";
+	private static String FILENAME = "export_for_RS";
 //	private static String FILENAME = "test";
 	private static String FILE_EXT = "xml";
 	private static String PATH = "D:/Xyleme/performance/products/xpe/output/";

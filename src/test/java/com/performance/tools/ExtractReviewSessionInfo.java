@@ -9,12 +9,12 @@ import java.util.regex.Pattern;
 
 public class ExtractReviewSessionInfo {
 
-	private static String TEST_FOLDER = "22-Feb-2016";
+	private static String TEST_FOLDER = "10-Jun-2016";
 	private static String TEST_NUMBER = "1";
 	private static String PATH = "D:/Xyleme/performance/products/xpe/review_session/";
 	private static String PATHNAME = PATH + TEST_FOLDER + "/TEST_"
 			+ TEST_NUMBER + "/csv/";
-	private static String FILENAME = "1000 (Web Course).xml";
+	private static String FILENAME = "export_for_RS.xml";
 	private static String OUTPUT_PATH = PATH + TEST_FOLDER + "/TEST_"
 			+ TEST_NUMBER + "/graph/data/";
 
@@ -26,7 +26,7 @@ public class ExtractReviewSessionInfo {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		File file = new File(PATHNAME + FILENAME);
 		try {
-			File containerGuidFile = new File(OUTPUT_PATH + "CONTAINERS.txt");
+			File containerGuidFile = new File(OUTPUT_PATH + "PAGES.txt");
 			File fragmentGuidFile = new File(OUTPUT_PATH + "FRAGMENTS.txt");
 			if (containerGuidFile.exists()) {
 				containerGuidFile.delete();
@@ -51,9 +51,14 @@ public class ExtractReviewSessionInfo {
 					if (child.getFirstChild().getTextContent()
 							.startsWith("Container")) {
 						for (int j = 1; j <= child.getChildNodes().getLength() - 1; j++) {
-							Pattern guidPattern = Pattern
-									.compile("xy:guid=\"(.+?)\"");
+							Pattern guidPattern = Pattern.compile("xy:guid=\"(.+?)\"");
 							Matcher guidMatcher;
+							if(child.getChildNodes().item(j).getFirstChild().getNodeName().equals("Topic")){
+								guidMatcher = guidPattern.matcher(child.getChildNodes().item(j).getFirstChild().getAttributes().item(0) + "");
+								if (guidMatcher.matches()) {
+									fragmentGuidWriter.write(guidMatcher.group(1) + "\n");
+								}
+							}
 							for (int k = 0; k <= child.getChildNodes().item(j)
 									.getAttributes().getLength() - 1; k++) {
 								guidMatcher = guidPattern.matcher(child
