@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class PerformanceStatisticsCompareRuns {
 
-	private static String TEST_FOLDER = "24-Jun-2016";
+	private static String TEST_FOLDER = "22-Sep-2016";
 	private static String TEST_NUMBER = "1";
 	private static String FILENAME_TEMPLATE = "_SUMMARY_FILTERED_";
 //	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
@@ -122,9 +122,11 @@ public class PerformanceStatisticsCompareRuns {
 				if(responseTime.keySet().size() == 2){
 					String t1Str = responseTime.get(FILENAME_TEMPLATE + 1).get(request).replaceAll(",", ".");
 					String t2Str = responseTime.get(FILENAME_TEMPLATE + 2).get(request).replaceAll(",", ".");
+					float t1;
+					float t2;
 					if(!t1Str.equals("") && !t2Str.equals("")){
-						float t1 = Float.parseFloat(t1Str);
-						float t2 = Float.parseFloat(t2Str);
+						t1 = Float.parseFloat(t1Str);
+						t2 = Float.parseFloat(t2Str);
 						float changePercentage;
 						String changePercentageStr;
 						if(t1 <= t2){
@@ -135,6 +137,11 @@ public class PerformanceStatisticsCompareRuns {
 							changePercentage = (t1 - t2) / t1 * 100;
 							changePercentageStr = ("" + changePercentage).replaceAll("\\.", ",");
 							writer.write(changePercentageStr + "|");
+						}
+						if(title.contains("_SCALED_BY_")){
+							writer.write(("" + Math.abs(t1 / SCALE_RATE - t2 / SCALE_RATE)).replaceAll("\\.", ",") + "|");
+						} else {
+							writer.write(("" + Math.abs(t1 - t2)).replaceAll("\\.", ",") + "|");
 						}
 					} else {
 						writer.write("|");

@@ -19,14 +19,14 @@ import java.util.regex.Pattern;
 
 public class PerformanceStatisticsGetSummary {
 
-	private static String TEST_FOLDER = "03-Jun-2016";
+	private static String TEST_FOLDER = "22-Sep-2016";
 	private static String TEST_NUMBER = "1";
-	private static String BASELINE_FILENAME = "1467026439443.jtl";
-	private static String FILENAME = "1467026439443.jtl";
+	private static String BASELINE_FILENAME = "510_2.jtl";
+	private static String FILENAME = "510_2.jtl";
 	private static String FILTERS = "PAUSE|_AUX";
 //	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
 	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
-	// private static String PATH = "D:/Xyleme/performance/products/xpe/review_session/";
+//	 private static String PATH = "D:/Xyleme/performance/products/xpe/review_session/";
 //	private static String PATH = "D:/Xyleme/performance/products/msis/testing/";
 	// private static String PATH = "D:/Xyleme/performance/products/lcms/testing/";
 	// private static String PATH = "D:/Xyleme/performance/products/bcp/tests/";
