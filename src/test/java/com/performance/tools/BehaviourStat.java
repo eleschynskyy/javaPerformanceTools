@@ -9,11 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +30,68 @@ public class BehaviourStat {
 
 	public static void main(String[] args) {
 		splitThreads(FILENAME);
+		getDetails();
+	}
+
+	private static void getDetails() {
+		File outputFile = new File(OUTPUT_PATH + "details.txt");
+		if (outputFile.exists()) {
+			outputFile.delete();
+		}
+		try {
+			FileWriter writer = new FileWriter(outputFile);
+			File folder = new File(OUTPUT_PATH);
+			File[] listOfFiles = folder.listFiles();
+			for (File file : listOfFiles) {
+				if (file.getName().startsWith("__")) {
+					Map<String, String> totalStat = new HashMap<String, String>();
+					BufferedReader reader = new BufferedReader(new FileReader(file));
+					String[] keys = reader.readLine().split(",");
+					if (keys != null) {
+						String[] dataParts;
+						String line;
+						while ((line = reader.readLine()) != null) {
+							Map<String, String> row = new HashMap<String, String>();
+							Pattern quotedValuePattern = Pattern.compile(".*(\".+?\").*");
+							Matcher quotedValueMatcher = quotedValuePattern.matcher(line);
+							String insideQuotedValue = "";
+							if (quotedValueMatcher.matches()) {
+								insideQuotedValue = quotedValueMatcher.group(1).replaceAll(",", ";");
+								line = line.replace(quotedValueMatcher.group(1), insideQuotedValue);
+							}
+							dataParts = line.split(",");
+							for (int i = 0; i < keys.length; i++) {
+								row.put(keys[i], dataParts[i]);
+							}
+							if(row.containsKey("label")){
+								if(row.get("label").equals("endSession_BHV")){
+									List<String> sortedKeys = new ArrayList<String>(totalStat.size());
+									sortedKeys.addAll(totalStat.keySet());
+									Collections.sort(sortedKeys);
+									for (String label : sortedKeys) {
+										writer.write(">> " + label.substring(0, label.length() - 4) + ": " + totalStat.get(label) + "\n");
+									}
+									writer.write("==============================================================\n");
+									totalStat = new HashMap<String, String>();
+								} else {
+									writer.write(row.get("label").substring(0, row.get("label").length() - 4) + "\n");
+									if(!totalStat.containsKey(row.get("label"))){
+										totalStat.put(row.get("label"), "1");
+									} else {
+										totalStat.put(row.get("label"), (Integer.parseInt(totalStat.get(row.get("label"))) + 1) + "");
+									}
+								}
+							}
+				        }
+						reader.close();
+			        }
+				}
+			}
+			writer.close();
+		} catch (IOException e) {
+			throw new RuntimeException("Could not read file.\n" + e.getStackTrace().toString());
+		}
+
 	}
 
 	private static void splitThreads(String fileToProcess) {
