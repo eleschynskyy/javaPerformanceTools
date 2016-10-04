@@ -11,11 +11,11 @@ import java.util.Map;
 
 public class PerformanceStatisticsCompareRuns {
 
-	private static String TEST_FOLDER = "22-Sep-2016";
+	private static String TEST_FOLDER = "26-Sep-2016";
 	private static String TEST_NUMBER = "1";
 	private static String FILENAME_TEMPLATE = "_SUMMARY_FILTERED_";
-//	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
-	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
+	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
+//	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
 	// private static String PATH = "D:/Xyleme/performance/products/xpe/review_session/";
 //	private static String PATH = "D:/Xyleme/performance/products/msis/testing/";
 	// private static String PATH = "D:/Xyleme/performance/products/lcms/testing/";

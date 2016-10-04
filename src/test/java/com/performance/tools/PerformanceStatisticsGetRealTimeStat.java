@@ -6,28 +6,32 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PerformanceStatisticsGetSummary {
+public class PerformanceStatisticsGetRealTimeStat {
 
-	private static String TEST_FOLDER = "22-Sep-2016";
+	private static String TEST_FOLDER = "01-Aug-2016";
 	private static String TEST_NUMBER = "1";
-	private static String BASELINE_FILENAME = "log.jtl";
-	private static String FILENAME = "log.jtl";
+	private static String BASELINE_FILENAME = "MsisPT-1472476602-complete.jtl";
+	private static String FILENAME = "MsisPT-1472476602-complete.jtl";
 	private static String FILTERS = "PAUSE|_AUX";
 //	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
-	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
+//	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
 //	 private static String PATH = "D:/Xyleme/performance/products/xpe/review_session/";
-//	private static String PATH = "D:/Xyleme/performance/products/msis/testing/";
+	private static String PATH = "D:/Xyleme/performance/products/msis/testing/";
 	// private static String PATH = "D:/Xyleme/performance/products/lcms/testing/";
 	// private static String PATH = "D:/Xyleme/performance/products/bcp/tests/";
 	private static float APDEX_T_TIME_RATE = 20;// %
@@ -47,15 +51,73 @@ public class PerformanceStatisticsGetSummary {
 	private static String FRUSTRATED = "frustrated";
 
 	public static void main(String[] args) {
-		processResults(BASELINE_FILENAME);
-		generateTTime();
-		cleanUp();
-		processResults(FILENAME);
-		calculateApdexInfo();
-		makeSummary();
-		cleanUp();
-		filterSummary();
+		getTimeline(BASELINE_FILENAME);
+//		processResults(BASELINE_FILENAME);
+//		generateTTime();
+//		cleanUp();
+//		processResults(FILENAME);
+//		calculateApdexInfo();
+//		makeSummary();
+//		cleanUp();
+//		filterSummary();
 		System.out.println("DONE");
+	}
+
+	private static void getTimeline(String fileToProcess) {
+		int periodToGroupByMs = 60000;
+		String filePath = PATHNAME + fileToProcess;
+		File file = new File(filePath);
+		String outputFileName = OUTPUT_PATH + "_TIMELINE_" + FILTERED_SUMMARY_FILENAME;
+		File outputFile = new File(outputFileName);
+		if (outputFile.exists()) {
+			outputFile.delete();
+		}
+		try{
+			FileWriter writer = new FileWriter(outputFile);
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			String[] dataParts;
+			String line;
+			boolean milestoneSet = false;
+			int numberOfRequests = 1;
+			long milestone = 0;
+			while ((line = reader.readLine()) != null) {
+				if(line.contains("WPr_startMrk_")){
+					dataParts = line.split(",");
+					writer.write(dataParts[0] + "\n");
+					if(!milestoneSet){
+						milestone = Long.parseLong(dataParts[0].substring(0, dataParts[0].length() - 3) + "000");
+						milestoneSet = true;
+					} else {
+						long next = Long.parseLong(dataParts[0].substring(0, dataParts[0].length() - 3) + "000");
+						if(next - milestone < periodToGroupByMs){
+							numberOfRequests++;
+						} else {
+							Date date = new Date(milestone);
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+							sdf.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+							String formattedDate = sdf.format(date);
+							System.out.println("<" + formattedDate + "> " + numberOfRequests);
+							milestone = next;
+							numberOfRequests = 1;
+						}
+					}
+				}
+			}
+			Date date = new Date(milestone);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+			sdf.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+			String formattedDate = sdf.format(date);
+			System.out.println("<" + formattedDate + "> " + numberOfRequests);
+			reader.close();
+			writer.close();
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException("File " + filePath
+					+ " was not found.\n" + e.getStackTrace().toString());
+		} catch (IOException e) {
+			throw new RuntimeException("Could not read " + filePath
+					+ " file.\n" + e.getStackTrace().toString());
+		}
+		System.out.println("Filtering done");
 	}
 
 	private static void filterSummary() {
@@ -153,8 +215,6 @@ public class PerformanceStatisticsGetSummary {
 				if (!wholeStat.get(request).get("apd_ttime").equals("N/A")) {
 					float apdBaseline = new Float(wholeStat.get(request)
 							.get("apd_baseline").replaceAll(",", "."));
-					//calculate absolute difference
-					wholeStat.get(request).put("avg_to_baseline_diff", String.format("%.2f", Math.abs(extAvg - apdBaseline)));
 					//calculate average to baseline %
 					float changePercentage;
 					if(extAvg >= apdBaseline){
@@ -174,7 +234,7 @@ public class PerformanceStatisticsGetSummary {
 
 		String outputFileName = OUTPUT_PATH + SUMMARY_FILENAME;
 		try {
-			String wholeStatisticHeader = "errors_n|total_n|percentage|ext_avg|apd_baseline|avg_to_baseline|avg_to_baseline_diff|apd_ttime|apd_satisfied_n|"
+			String wholeStatisticHeader = "errors_n|total_n|percentage|ext_avg|apd_baseline|avg_to_baseline|apd_ttime|apd_satisfied_n|"
 					+ "apd_toleranted_n|apd_frustrated_n|apd_total_n|apd_satisfiedP|apd_tolerantedP|apd_frustratedP|apd_apdex";
 			String[] headerKeys = wholeStatisticHeader.split("\\|");
 			File outputFile = new File(outputFileName);
@@ -183,7 +243,7 @@ public class PerformanceStatisticsGetSummary {
 			}
 			FileWriter writer = new FileWriter(outputFile);
 			writer.write("request|" + "errors_n|" + "total_n|" + "percentage|"
-					+ "ext_avg|" + "apd_baseline|" + "avg_to_baseline|" + "avg_to_baseline_diff|"
+					+ "ext_avg|" + "apd_baseline|" + "avg_to_baseline|"
 					+ "apd_ttime|" + "apd_satisfied_n|" + "apd_toleranted_n|"
 					+ "apd_frustrated_n|" + "apd_total_n|" + "apd_satisfiedP|"
 					+ "apd_tolerantedP|" + "apd_frustratedP|" + "apd_apdex|\n");
