@@ -15,15 +15,15 @@ public class TransformUncompiledScript {
 	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
 	private static String PATHNAME = PATH + TEST_FOLDER + "/TEST_" + TEST_NUMBER + "/csv/";
 	private static String OUTPUT_PATH = PATH + TEST_FOLDER + "/TEST_" + TEST_NUMBER + "/csv/";
-	private static String OUTPUT_FILENAME = "T_UNCOMPILED_TMPL.jmx";
+	private static String OUTPUT_FILENAME = "T_UNCOMPILED_LAC.jmx";
 
 	public static void main(String[] args) {
-		File file = new File(PATHNAME + "UNCOMPILED_TMPL.jmx");
+		File file = new File(PATHNAME + "UNCOMPILED_LAC.jmx");
 		File outputFile = new File(OUTPUT_PATH + OUTPUT_FILENAME);
 		if (outputFile.exists()) {
 			outputFile.delete();
 		}
-		File legendFile = new File(OUTPUT_PATH + "LEGEND.txt");
+		File legendFile = new File(OUTPUT_PATH + "LEGEND_LAC.txt");
 		if (legendFile.exists()) {
 			legendFile.delete();
 		}
@@ -39,9 +39,9 @@ public class TransformUncompiledScript {
 				samplerNameMatcher = samplerNamePattern.matcher(line);
 				if(samplerNameMatcher.matches()){
 					line = line.replaceAll("\\?", "");
-					line = line.replaceAll(samplerNameMatcher.group(1), "" + iterator);
+					line = line.replaceAll(samplerNameMatcher.group(1), "LAC_" + iterator);
 					outputWriter.write(line);
-					legendWriter.write(iterator + " - " + samplerNameMatcher.group(1) + "\n");
+					legendWriter.write("LAC_" + iterator + " - " + samplerNameMatcher.group(1) + "\n");
 					iterator++;
 				} else {
 					outputWriter.write(line);

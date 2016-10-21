@@ -16,17 +16,19 @@ import java.util.regex.Pattern;
 
 public class BehaviourStat {
 
-	private static String TEST_FOLDER = "22-Sep-2016";
-	private static String TEST_NUMBER = "1";
-	private static String FILENAME = "log.jtl";
+//	private static String TEST_FOLDER = "22-Sep-2016";
+//	private static String TEST_NUMBER = "1";
+	private static String FILENAME = "log_1477060133760.jtl";
 //	private static String PATH = "D:/Xyleme/performance/products/sps/testing/";
-	private static String PATH = "D:/Xyleme/performance/products/xpe/cloud/";
+	private static String PATH = "D:/sandbox/";
 //	private static String PATH = "D:/Xyleme/performance/products/xpe/review_session/";
 //	private static String PATH = "D:/Xyleme/performance/products/msis/testing/";
 //  private static String PATH = "D:/Xyleme/performance/products/lcms/testing/";
 //  private static String PATH = "D:/Xyleme/performance/products/bcp/tests/";
-	private static String PATHNAME = PATH + TEST_FOLDER + "/TEST_" + TEST_NUMBER + "/csv/";
-	private static String OUTPUT_PATH = PATH + TEST_FOLDER + "/TEST_" + TEST_NUMBER + "/csv/threads/";
+//	private static String PATHNAME = PATH + TEST_FOLDER + "/TEST_" + TEST_NUMBER + "/csv/";
+//	private static String OUTPUT_PATH = PATH + TEST_FOLDER + "/TEST_" + TEST_NUMBER + "/csv/threads/";
+	private static String PATHNAME = PATH;
+	private static String OUTPUT_PATH = PATH + "threads/";
 
 	public static void main(String[] args) {
 		splitThreads(FILENAME);
@@ -64,21 +66,25 @@ public class BehaviourStat {
 								row.put(keys[i], dataParts[i]);
 							}
 							if(row.containsKey("label")){
-								if(row.get("label").equals("endSession_BHV")){
+								String label = row.get("label");
+								if(label.endsWith("login_BHV")){
+									label = "login_BHV";
+								}
+								if(label.endsWith("exit_BHV")){
 									List<String> sortedKeys = new ArrayList<String>(totalStat.size());
 									sortedKeys.addAll(totalStat.keySet());
 									Collections.sort(sortedKeys);
-									for (String label : sortedKeys) {
-										writer.write(">> " + label.substring(0, label.length() - 4) + ": " + totalStat.get(label) + "\n");
+									for (String key : sortedKeys) {
+										writer.write(">> " + key.substring(0, key.length() - 4) + ": " + totalStat.get(key) + "\n");
 									}
 									writer.write("==============================================================\n");
 									totalStat = new HashMap<String, String>();
 								} else {
-									writer.write(row.get("label").substring(0, row.get("label").length() - 4) + "\n");
-									if(!totalStat.containsKey(row.get("label"))){
-										totalStat.put(row.get("label"), "1");
+									writer.write(label.substring(0, label.length() - 4) + "\n");
+									if(!totalStat.containsKey(label)){
+										totalStat.put(label, "1");
 									} else {
-										totalStat.put(row.get("label"), (Integer.parseInt(totalStat.get(row.get("label"))) + 1) + "");
+										totalStat.put(label, (Integer.parseInt(totalStat.get(label)) + 1) + "");
 									}
 								}
 							}
@@ -121,13 +127,17 @@ public class BehaviourStat {
 						row.put(keys[i], dataParts[i]);
 					}
 					if(row.containsKey("threadName") && row.get("label").endsWith("_BHV")){
-						if(row.get("label").equals("endSession_BHV")){
+						String label = row.get("label");
+						if(label.endsWith("exit_BHV")){
 							sessionCounter++;
 						}
-						if(!totalStat.containsKey(row.get("label"))){
-							totalStat.put(row.get("label"), "1");
+						if(label.endsWith("login_BHV")){
+							label = "login_BHV";
+						}
+						if(!totalStat.containsKey(label)){
+							totalStat.put(label, "1");
 						} else {
-							totalStat.put(row.get("label"), (Integer.parseInt(totalStat.get(row.get("label"))) + 1) + "");
+							totalStat.put(label, (Integer.parseInt(totalStat.get(label)) + 1) + "");
 						}
 						String threadName = row.get("threadName");
 						if(!writers.containsKey(threadName)){
@@ -148,24 +158,25 @@ public class BehaviourStat {
 				for (FileWriter writer : writers.values()) {
 					writer.close();
 				}
-				totalStat.remove("endSession_BHV");
 				File outputFile = new File(OUTPUT_PATH + "summary.txt");
 				if (outputFile.exists()) {
 					outputFile.delete();
 				}
 				FileWriter writer = new FileWriter(outputFile);
-				writer.write("Expected concurrent users: " + concurrentUsers + "\n");
-				writer.write("Total user sessions: " + sessionCounter + "\n");
-				writer.write("Average frequency of user actions per session:\n");
-				writer.write("==============================================\n");
+//				writer.write("Expected concurrent users: " + concurrentUsers + "\n");
+//				writer.write("Total user sessions: " + sessionCounter + "\n");
+//				writer.write("Average frequency of user actions per session:\n");
+//				writer.write("==============================================\n");
 				List<String> sortedKeys = new ArrayList<String>(totalStat.size());
 				sortedKeys.addAll(totalStat.keySet());
 				Collections.sort(sortedKeys);
 				for (String label : sortedKeys) {
-					System.out.println(label.substring(0, label.length() - 4) + ": " + totalStat.get(label) + "/" + sessionCounter +
-							"=" + Float.parseFloat(totalStat.get(label)) / sessionCounter);
-					writer.write(label.substring(0, label.length() - 4) + ": " + totalStat.get(label) + "/" + sessionCounter +
-							"=" + Float.parseFloat(totalStat.get(label)) / sessionCounter + "\n");
+					if(!label.endsWith("exit_BHV")){
+						System.out.println(label.substring(0, label.length() - 4) + ": " + totalStat.get(label) + "/" + sessionCounter +
+								"=" + Float.parseFloat(totalStat.get(label)) / sessionCounter);
+						writer.write(label.substring(0, label.length() - 4) + ": " + totalStat.get(label) + "/" + sessionCounter +
+								"=" + Float.parseFloat(totalStat.get(label)) / sessionCounter + "\n");
+					}
 				}
 				writer.close();
 			}
